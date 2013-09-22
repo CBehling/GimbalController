@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>GimbalController</title>
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+	<style>
+	#y {
+	height:120px; float:left; margin:15px
+	}
+	#x {
+	width:120px; float:left; margin:15px
+	}
+	</style>
+	<script>
+	$(function() {
+		$( "#y" ).slider({
+			min:0,
+			max:180,
+			value: 90,
+			range: "min",
+			animate: true,
+			orientation: "vertical"
+		}).bind('slide', function(event,ui){
+			$.ajax({url:"/",datatype:'json',data:{
+				'x':$("#x").slider("option","value"),
+				'y':$("#y").slider("option","value")
+			}})
+		});
+		$( "#x" ).slider({
+			min:0,
+			max:180,
+			value: 90,
+			orientation: "horizontal",
+			range: "min",
+			animate: true
+		}).bind('slide', function(event,ui){
+			$.ajax({url:"/",datatype:'json',data:{
+				'x':$("#x").slider("option","value"),
+				'y':$("#y").slider("option","value")
+			}})
+		});
+	});
+  </script>
+</head>
+<body>
+	<div>
+		<span id="x"></span>
+		<span id="y"></span>
+	</div>
+</body>
+</html>
