@@ -7,39 +7,39 @@
 	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 	<style>
-	#y {
+	#pan {
 	height:120px; float:left; margin:15px
 	}
-	#x {
+	#tilt {
 	width:120px; float:left; margin:15px
 	}
 	</style>
 	<script>
 	$(function() {
-		$( "#y" ).slider({
+		$( "#pan" ).slider({
 			min:0,
-			max:180,
-			value: 90,
+			max:65535,
+			value: 32768,
 			range: "min",
 			animate: true,
 			orientation: "vertical"
 		}).bind('slide', function(event,ui){
-			$.ajax({url:"/",datatype:'json',data:{
-				'x':$("#x").slider("option","value"),
-				'y':$("#y").slider("option","value")
+			$.ajax({url:"/_position",datatype:'json',data:{
+				'tilt':$("#tilt").slider("option","value"),
+				'pan':$("#pan").slider("option","value")
 			}})
 		});
-		$( "#x" ).slider({
+		$( "#tilt" ).slider({
 			min:0,
-			max:180,
-			value: 90,
+			max:65535,
+			value: 32768,
 			orientation: "horizontal",
 			range: "min",
 			animate: true
 		}).bind('slide', function(event,ui){
-			$.ajax({url:"/",datatype:'json',data:{
-				'x':$("#x").slider("option","value"),
-				'y':$("#y").slider("option","value")
+			$.ajax({url:"/_position",datatype:'json',data:{
+				'tilt':$("#tilt").slider("option","value"),
+				'pan':$("#pan").slider("option","value")
 			}})
 		});
 	});
@@ -47,8 +47,8 @@
 </head>
 <body>
 	<div>
-		<span id="x"></span>
-		<span id="y"></span>
+		<span id="tilt"></span>
+		<span id="pan"></span>
 	</div>
 </body>
 </html>
