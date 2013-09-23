@@ -75,8 +75,8 @@ int16_t main(void) {
     //configure pins
     pin_digitalOut(&(D[0]));
     pin_digitalOut(&(D[1]));
-    oc_servo(&oc1, &(D[0]), &timer1, 20e-3, 0.800e-3, 2.2e-3, 0);
-    oc_servo(&oc2, &(D[1]), &timer2, 20e-3, 0.800e-3, 2.2e-3, 0);
+    oc_servo(&oc1, &(D[0]), &timer1, 20e-3, 0.600e-3, 2.5e-3, 0);
+    oc_servo(&oc2, &(D[1]), &timer2, 20e-3, 0.575e-3, 2.5e-3, 0);
 
     InitUSB();                              // initialize the USB registers and serial interface engine
     while (USB_USWSTAT!=CONFIG_STATE) {     // while the peripheral is not configured...
