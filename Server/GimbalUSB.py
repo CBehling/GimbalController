@@ -1,5 +1,6 @@
 
 import usb.core
+from time import sleep
 
 class GimbalUSB:
 
@@ -28,3 +29,9 @@ class GimbalUSB:
             print "Could not send GET_POS vendor request."
         else:
             return [int(ret[0])+int(ret[1])*256, int(ret[2])+int(ret[3])*256]
+
+    def scan(self):
+        for pan in range(0,65535,4096):
+            for tilt in range(0,65535,4096):
+                self.set_pos(pan,tilt)
+                sleep(.1)

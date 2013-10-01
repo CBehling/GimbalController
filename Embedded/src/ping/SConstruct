@@ -3,7 +3,7 @@ env = Environment(PIC = '24FJ128GB206',
                   PROGSUFFIX = '.elf', 
                   CFLAGS = '-g -omf=elf -x c -mcpu=$PIC', 
                   LINKFLAGS = '-omf=elf -mcpu=$PIC -Wl,--script="app_p24FJ128GB206.gld"', 
-                  CPPPATH = '../lib')
+                  CPPPATH = '../../lib')
 env.PrependENVPath('PATH', '/opt/microchip/xc16/v1.11/bin')
 bin2hex = Builder(action = 'xc16-bin2hex $SOURCE -omf=elf',
                   suffix = 'hex', 
@@ -14,12 +14,9 @@ list = Builder(action = 'xc16-objdump -S -D $SOURCE > $TARGET',
                src_suffix = 'elf')
 env.Append(BUILDERS = {'List' : list})
 
-env.Program('main', ['main.c',
-                         'descriptors.c', 
-                         'usb.c', 
-                         '../lib/pin.c', 
-                         '../lib/uart.c',
-                         '../lib/timer.c',
-                         '../lib/oc.c'])
-env.Hex('main')
-env.List('main')
+env.Program('ping', ['ping.c',
+                         '../../lib/pin.c',
+                         '../../lib/timer.c',
+                         '../../lib/oc.c'])
+env.Hex('ping')
+env.List('ping')

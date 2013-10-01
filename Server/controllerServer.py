@@ -10,14 +10,19 @@ def home():
 
 @app.route('/_position')
 def _position():
-	print "save me"
 	pan = request.args.get('pan', 0, type=int)
-	print pan
 	tilt = request.args.get('tilt', 0, type=int)
-	print tilt
 	gimbal.set_pos(pan,tilt)
-	return jsonify(result=0)
-    #send commands to the servo here
+	return jsonify()
+
+@app.route('/_scan')
+def _scan():
+	print "hello"
+	gimbal.scan()
+	print "hello1"
+	return jsonify()
+
+
 
 if __name__ == '__main__':
     app.run()

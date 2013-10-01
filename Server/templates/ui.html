@@ -42,6 +42,9 @@
 				'pan':$("#pan").slider("option","value")
 			}})
 		});
+		$("#scan").button().click(function(event){
+			$.ajax({url:"/_scan"})
+		});
 	});
   </script>
 </head>
@@ -50,5 +53,6 @@
 		<span id="tilt"></span>
 		<span id="pan"></span>
 	</div>
+	<button id="scan">Scan</button>
 </body>
 </html>
