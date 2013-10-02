@@ -7,6 +7,7 @@ class GimbalUSB:
     def __init__(self):
         self.SET_POS = 0
         self.GET_POS = 1
+        self.GET_DIST = 2
         self.dev = usb.core.find(idVendor = 0x6666, idProduct = 0x0003)
         if self.dev is None:
             raise ValueError('no USB device found matching idVendor = 0x6666 and idProduct = 0x0003')
@@ -29,6 +30,14 @@ class GimbalUSB:
             print "Could not send GET_POS vendor request."
         else:
             return [int(ret[0])+int(ret[1])*256, int(ret[2])+int(ret[3])*256]
+
+    def get_dist(self):
+        try:
+            ret = self.dev.ctrl_transfer(0xC0, self.GET_DIST, 0, 0, 2)
+        except usb.core.USBError:
+            print "Could not send GET_DIST vendor request."
+        else:
+            return int(ret[0])+int(ret[1])*256
 
     def scan(self):
         for pan in range(0,65535,4096):

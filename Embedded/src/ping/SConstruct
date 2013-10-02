@@ -15,7 +15,10 @@ list = Builder(action = 'xc16-objdump -S -D $SOURCE > $TARGET',
 env.Append(BUILDERS = {'List' : list})
 
 env.Program('ping', ['ping.c',
+                         'descriptors.c', 
+                         'usb.c',
                          '../../lib/pin.c',
+                         '../../lib/uart.c',
                          '../../lib/timer.c',
                          '../../lib/oc.c'])
 env.Hex('ping')
