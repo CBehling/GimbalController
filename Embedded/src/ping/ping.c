@@ -14,7 +14,7 @@
 #define GET_DIST 2
 
 uint16_t dist = 0;
-uint16_t dist_capture_flag = False;
+uint16_t distCapt = False;
 
 void VendorRequests(void) {
     WORD temp;
@@ -71,10 +71,10 @@ int16_t main(void) {
         //determine when to send the ping
     	if (!pingOn && timer_read(&timer3) < 1 << 8){
     		pingOn = True;
-            if (dist_capture_flag){
+            if (distCapt){
                 dist = 0;
             }
-            dist_capture_flag = True;
+            distCapt = True;
     		pin_write(&(D[2]), 1 << 15);
 		}else if(pingOn && timer_read(&timer3) >= 1 << 8){
 			pingOn = False;
@@ -84,9 +84,9 @@ int16_t main(void) {
         //determine when to read the ping
         if(timer_read(&timer3) >= 0b1101 << 7){
             if (pin_read(&D[3])) {
-                if (dist_capture_flag){
+                if (distCapt){
                     dist = timer_read(&timer3);
-                    dist_capture_flag = False;
+                    distCapt = False;
                 }
             }
         }
