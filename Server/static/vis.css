@@ -1,0 +1,8 @@
+.gimbal{
+	position: absolute;
+}
+/* make the last child relatively positioned
+to keep the size of the parent div*/
+.gimbal:last-child{
+	position: relative;
+}
