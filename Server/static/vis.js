@@ -3,6 +3,7 @@ var canvas = new Array();
 var context = [];
 var width,height,radius;
 var numLayers;
+var x, y;
 
 /* All Layers */
 function initCanvas(){
@@ -44,25 +45,117 @@ function addData(x,y,val){
   context[1].fill();
 }
 
-function clearData () {
-  //TODO: clear the entire layer
+function clearLayer(n) {
+  context[n].clearRect ( 0 , 0 , width , height );
 }
 
 /* Position Layer */
+function clickMove(evt){
+  x = evt.offsetX;
+  y = evt.offsetY;
+  var r = Math.sqrt((x-width/2)*(x-width/2) + (y-height/2)*(y-height/2));
+  if (r>radius){
+    return false;
+  }
+  moveTo(x,y);//update graphical position
+
+  //send AJAX request
+  var temp = getPanTiltFromXY(x, y);
+  $.ajax({url:"/_position", datatype:'json', data:{
+    'pan':temp[0],
+    'tilt':temp[1]
+  }})
+  //TODO send AJAX request
+  console.log('X:    ' + x);
+  console.log('Y:    ' + y);
+  console.log('Pan:  ' + temp[0]);
+  console.log('Tilt: ' + temp[1]);
+}
+
 function moveTo(x,y){
-  context[2].clearRect ( 0 , 0 , width , height );
+  clearLayer(2);
   context[2].beginPath();
   context[2].arc(x,y,3,0,2*Math.PI,false);
   context[2].stroke();
 }
-//TODO draw something that indicates the current position of the gimbal
+
+/* Scan */
+function ping(x,y){
+
+  var temp = getPanTiltFromXY(x,y);
+  $.ajax({method:"GET",
+    url:"/_ping",
+    datatype:"json",
+    data:{
+      'pan':temp[0],
+      'tilt':temp[1]
+    },
+    success: function(data){
+      var temp = getXYFromPanTilt(data.pan, data.tilt);
+      //TODO: convert data to range 0,255
+      addData(temp[0], temp[1], data.dist);
+
+      temp = getNextInRange(temp[0],temp[1]);
+      if (temp != undefined){
+        ping(temp[0],temp[1]);
+      }
+    }
+  });
+}
+
+function getNextInRange(x,y){
+  do{
+    console.log("x: " + x + " y: " + y)
+    if (x>width){
+      return undefined;
+    }
+    if (y>height){
+      y -= 10;
+      x += 10;
+      continue;
+    }
+    if (y<0){
+      y+=10;
+      x+=10;
+      continue;
+    }
+    if (!(Math.round(x/10)%2)){
+      console.log('increasing')
+      y+=10; 
+    }else{
+      console.log('decreasing')
+      y-=10;
+    }
+  }while(!inRange(x,y));
+  return [x,y];
+}
+
+function scan(){
+  var temp = getNextInRange(0,0);
+  ping(temp[0],temp[1]);
+  /*
+  for (var x=0; x<width; x+=30){
+    for (var y=0; y<height; y+=30){
+      if (inRange(x,y)){
+        ping(x,y);
+        console.log("ping x: " + x+ " y: " + y)
+      }
+    }
+  }*/
+}
 
 /* Helper Functions */
 function getXYFromPanTilt(pan,tilt){
-  var r = Math.cos(tilt)*canvas.radius;
-  var theta = pan;
-  var x = r*Math.cos(theta);
-  var y = r*Math.sin(theta);
+  var r, theta;
+  if (tilt <= Math.PI/2){
+    theta = Math.PI/2-pan;
+    r = radius*Math.cos(tilt);
+  }else{
+    theta = 3*Math.PI/2 - pan;
+    r = radius*Math.cos(Math.PI-tilt);
+  }
+  var x = r*Math.cos(theta) + width/2;
+  var y = r*Math.sin(theta) + height/2;
   return [x,y]
 }
 
@@ -73,19 +166,22 @@ function getPanTiltFromXY(x,y){
 
   //calculate tilt
   var r = Math.sqrt(x*x + y*y);
-  var sign = y/Math.abs(y);
-  if (y==0){
-    sign = 0;
+  if (x>=0){
+    tilt = Math.acos(r/radius);
+  }else{
+    tilt = Math.PI - Math.acos(r/radius);
   }
-  if (r>radius){
-    r = radius;
-  }
-  var tilt = Math.acos(r/radius*sign);
   
   //calculate pan
-  var pan = Math.atan(y/x)+Math.PI/2;
+  var pan = Math.PI/2-Math.atan(y/x);
   
   return [pan, tilt]
+}
+
+function inRange(x,y){
+  x -= width/2;
+  y -= height/2;
+  return x*x + y*y <= radius*radius;
 }
 
 /* Initialize Everything */
@@ -93,24 +189,8 @@ $(function(){
   initCanvas();
   drawBackground();
 
-  $(canvas[canvas.length-1]).bind("click",function(evt){
-    var x = evt.offsetX, y = evt.offsetY;
-    var r = Math.sqrt((x-width/2)*(x-width/2) + (y-height/2)*(y-height/2));
-    if (r>radius){
-      return;
-    }
-    moveTo(x,y);//update graphical position
-
-    //send AJAX request
-    var temp = getPanTiltFromXY(x, y);
-    $.ajax({url:"/_position", datatype:'json', data:{
-      'pan':temp[0],
-      'tilt':temp[1]
-    }})
-    //TODO send AJAX request
-    console.log('Pan:  ' + temp[0]);
-    console.log('Tilt: ' + temp[1]);
-  });
-    //test displaying data
-    addData(100,100,200)
+  $(canvas[canvas.length-1]).bind("draginit",clickMove);
+  $(canvas[canvas.length-1]).bind("drag",clickMove);
+    //test displaying datatype
+  $("#scan").bind("click",scan);
 });

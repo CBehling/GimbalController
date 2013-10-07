@@ -17,9 +17,10 @@ class GimbalUSB:
         self.dev = None
 
     def set_pos(self, pan, tilt):
-        pan = pan*65535/pi;
-        tilt = tilt*65535/pi;
-        print 'setting pan/tilt'
+        self.pan = pan;
+        self.tilt = tilt;
+        pan = pan*65535.0/pi;
+        tilt = tilt*65535.0/pi;
         try:
             self.dev.ctrl_transfer(0x40, self.SET_POS, int(pan), int(tilt))
         except usb.core.USBError:

@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify, request
 from GimbalUSB import GimbalUSB
+from time import sleep
 
 gimbal = GimbalUSB()
 app = Flask(__name__)
@@ -10,17 +11,25 @@ def home():
 
 @app.route('/_position')
 def _position():
-	pan = request.args.get('pan', 0, type=int)
-	tilt = request.args.get('tilt', 0, type=int)
+	pan = request.args.get('pan', 0, type=float)
+	tilt = request.args.get('tilt', 0, type=float)
 	gimbal.set_pos(pan,tilt)
 	return jsonify()
 
-@app.route('/_scan')
+@app.route('/_ping')
+def _ping():
+	pan = request.args.get('pan', 0, type=float)
+	tilt = request.args.get('tilt', 0, type=float)
+	gimbal.set_pos(pan,tilt)
+	sleep(.05)
+	dist = gimbal.get_dist()
+	return jsonify(pan=gimbal.pan, tilt=gimbal.tilt, dist=dist) 
+
+@app.route('/_scan', methods=["GET"])
 def _scan():
-	print "hello"
-	gimbal.scan()
-	print "hello1"
-	return jsonify()
+	#gimbal.scan()
+	dist = gimbal.get_dist()
+	return jsonify(pan=gimbal.pan, tilt=gimbal.tilt, dist=dist)
 
 
 
