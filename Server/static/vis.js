@@ -39,9 +39,15 @@ function rgb2Hex(red, green, blue)
 }
 
 function addData(x,y,val){
+  if (val > 2000){
+    val = 256*(1-(val-2000)/7000);
+    console.log("Value: "+val);
+  }
+  val = Math.round(val);
+  console.log("Value: "+val);
   context[1].beginPath();
   context[1].arc(x, y, 3, 0, 2 * Math.PI, false);
-  context[1].fillStyle = rgb2Hex(0,0,val);
+  context[1].fillStyle = rgb2Hex(0,Math.round(val*.66),val);
   context[1].fill();
 }
 
@@ -105,7 +111,6 @@ function ping(x,y){
 
 function getNextInRange(x,y){
   do{
-    console.log("x: " + x + " y: " + y)
     if (x>width){
       return undefined;
     }
@@ -120,10 +125,8 @@ function getNextInRange(x,y){
       continue;
     }
     if (!(Math.round(x/10)%2)){
-      console.log('increasing')
       y+=10; 
     }else{
-      console.log('decreasing')
       y-=10;
     }
   }while(!inRange(x,y));
