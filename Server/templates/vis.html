@@ -4,16 +4,16 @@
 	<meta charset="utf-8">
 	<title>GimbalController</title>
 	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-	<link rel="stylesheet" href="ui.css" />
+	<link rel="stylesheet" href="vis.css" />
 	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-	<script src="ui.js"></script>
+	<script src="vis.js"></script>
 </head>
 <body>
 	<div>
-		<span id="tilt"></span>
-		<span id="pan"></span>
+		<canvas id="gimbalLayer0" class="gimbal" width="400" height="400"></canvas>
+		<canvas id="gimbalLayer1" class="gimbal" width="400" height="400"></canvas>
+		<canvas id="gimbalLayer2" class="gimbal" width="400" height="400"></canvas>
 	</div>
 	<button id="scan">Scan</button>
 </body>
-</html>
