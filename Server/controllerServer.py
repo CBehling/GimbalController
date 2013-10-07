@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return render_template('ui.html')
+    return render_template('vis.html')
 
 @app.route('/_position')
 def _position():

@@ -16,6 +16,12 @@
 #define GET_POS     1
 #define GET_DIST    2
 
+#define TRANS   &D[2]
+#define REC     &D[3]
+
+#define THRESH  0b1101 << 7
+#define THRESH  0b1 << 11
+
 uint16_t pan, tilt, dist;
 
 void VendorRequests(void) {
@@ -85,8 +91,8 @@ int16_t main(void) {
     //pin_digitalOut(&(D[1]));  //probably don't need this
     oc_servo(&oc1, &(D[0]), &timer1, 20e-3, 0.600e-3, 2.5e-3, 0);   //to control the tilt servo
     oc_servo(&oc2, &(D[1]), &timer2, 20e-3, 0.575e-3, 2.5e-3, 0);   //to control the pan servo
-    pin_digitalIn(&(D[3]));                     //to read the comparator ultrasonic sensor output
-    oc_pwm(&oc3, &(D[2]), NULL, 40e3, 1 << 15); //to send a 40kHz transmitter pulse
+    pin_digitalIn(REC);                     //to read the comparator ultrasonic sensor output
+    oc_pwm(&oc3, TRANS, NULL, 40e3, 1 << 15); //to send a 40kHz transmitter pulse
     timer_setPeriod(&timer3, 0.02);             //to control the ping size
     timer_start(&timer3);
 
@@ -103,14 +109,14 @@ int16_t main(void) {
                 dist = 0;
             }
             distCapt = True;
-            pin_write(&(D[2]), 1 << 15);
+            pin_write(TRANS, 1 << 15);
         }else if(pingOn && timer_read(&timer3) >= 1 << 8){
             pingOn = False;
-            pin_write(&(D[2]), 0);
+            pin_write(TRANS, 0);
         }
 
         //determine when to read the ping
-        if(timer_read(&timer3) >= 0b1101 << 7 && pin_read(&D[3]) && distCapt){
+        if(timer_read(&timer3) >= THRESH && pin_read(REC) && distCapt){
 //            if (pin_read(&D[3])) {
 //                if (distCapt){
                     dist = timer_read(&timer3);

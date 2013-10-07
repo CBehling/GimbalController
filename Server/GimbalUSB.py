@@ -1,6 +1,6 @@
-
 import usb.core
 from time import sleep
+from math import pi as pi
 
 class GimbalUSB:
 
@@ -17,6 +17,8 @@ class GimbalUSB:
         self.dev = None
 
     def set_pos(self, pan, tilt):
+        pan = pan*65535/pi;
+        tilt = tilt*65535/pi;
         print 'setting pan/tilt'
         try:
             self.dev.ctrl_transfer(0x40, self.SET_POS, int(pan), int(tilt))

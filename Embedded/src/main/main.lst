@@ -8107,7 +8107,7 @@ Disassembly of section .text:
 00003b30 <.L15>:
     3b30:	40 c4 20    	mov.w     #0xc44, w0
     3b32:	0f fa 07    	rcall     0x2f52 <_timer_read>
-    3b34:	f1 67 20    	mov.w     #0x67f, w1
+    3b34:	f1 7f 20    	mov.w     #0x7ff, w1
     3b36:	81 0f 50    	sub.w     w0, w1, [w15]
     3b38:	d3 ff 36    	bra       LEU, 0x3ae0 <.L18>
     3b3a:	20 84 20    	mov.w     #0x842, w0
